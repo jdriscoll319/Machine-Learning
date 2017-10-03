@@ -1,0 +1,2 @@
+Grade on the final looks to have the strongest correlation to output grade.
+Grades for M3, M5, and P2 also look to be useful predictors though not as usefull as Final.

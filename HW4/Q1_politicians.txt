@@ -1,0 +1,3 @@
+All democrats voted yes on Export_south_africa making this attribute a very valuable predictor.
+Almost all republicans voted yes on Superfund_right_to_sue making this also very useful as a predictor of final outcome.
+It also looks like most republicans voted no on Duty_free_export which makes this another useful attribute.
