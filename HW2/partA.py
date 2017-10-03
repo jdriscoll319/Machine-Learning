@@ -1,0 +1,153 @@
+import sys
+
+def readInputFile(arg):
+    inputFile = open(arg, 'r')
+    inputList = inputFile.readlines()
+    inputFile.close()
+    return inputList
+
+#Questions 1-5 hardcoded. Don't need to to calculate based on unknown input
+def questions1to5Calculations():
+    inputSpace = 2**9
+    conceptSpace = 2**inputSpace
+    hypothesisSpace = 3**9 + 1
+    nonBinHypoSpace = 4 * 3**8 + 1
+    extendedHypoSpace = 3**10 + 1
+    print inputSpace
+    print len(str(conceptSpace))
+    print hypothesisSpace
+    print extendedHypoSpace
+    print nonBinHypoSpace
+    
+#takes in a training feature and counts number of tabs - there is a tab after every attribute so really we're counting attributes
+def getNumAttributes(trainingFeature):
+    return trainingFeature.count('\t')
+
+#takes tab delimited string of attributes and parses them into a list
+def getAttributes(trainingFeature):
+    numAttributes = getNumAttributes(trainingFeature)
+    splitFeature = trainingFeature.split('\t')
+    trainingAttributes= []
+    
+    for i in splitFeature:
+        trainingAttributes.append(i[:i.find(' ')])
+    
+    return trainingAttributes
+
+#takes in list of data inputs and parses it into a list of lists    
+def getAttributeValues(data):
+    attributeValues = []
+    for i in data:
+        valueList = []
+        i = i.strip('\r\n')
+        splitFeature = i.split('\t')
+        for j in splitFeature:
+            valueList.append(j[j.find(' ')+1:])
+        
+        attributeValues.append(valueList)
+        
+    return attributeValues
+
+#takes in a hypothesis as a list and converts it to a tab separated string ending in a new line
+def convertToString(currHypothesis):
+    hypothesisString=''
+    for i in currHypothesis:
+        hypothesisString += str(i)
+        hypothesisString += '\t'
+    hypothesisString.rstrip('\t')
+    hypothesisString += '\r\n'
+    return hypothesisString
+
+#takes in a list of different hypothesis findS iterated through and writes them to a file.    
+def printHypothesisTracker(hypothesisTracker):
+    partA6 = open('partA6.txt', 'w')
+    partA6.write(hypothesisTracker)
+    partA6.close()
+
+#low is negative
+#high is positive    
+def findS(hypothesis, attributes, attributeValues):
+    outcomeInstance = len(attributes)-1
+    hypothesisTracker = ''
+    for index, instance in enumerate(attributeValues):
+        if instance[outcomeInstance] == 'high':
+            for j in range(len(hypothesis)):
+                if hypothesis[j] == None:
+                    hypothesis[j] = instance[j]
+                elif hypothesis[j] != instance[j] and hypothesis[j] != '?':
+                    hypothesis[j] = '?'
+        
+        if index % 30 == 29 and index != 0:
+            hypothesisTracker += convertToString(hypothesis)
+            
+    return hypothesis, hypothesisTracker
+
+#takes in (final) hypothesis and a set of attribute values and calculates the misclassification rate [0,1]
+def checkMisclass(hypothesis, attributeValues):
+    numAttributes = len(hypothesis) #also == to outcomeInstance in devAttributeValues[n]
+    totalExamples = len(attributeValues)
+    attrWithVal = numAttributes - hypothesis.count('?')
+    misclassification = 0 #count number of discrepancies in an input. If >=attrWithVal, then there is a misclassification
+    numWrong = 0
+    for instance in attributeValues:
+        if instance[numAttributes] == 'high':
+            for i in range(numAttributes):
+                if hypothesis[i] != '?':
+                    if hypothesis[i] != instance[i]:
+                        misclassification += attrWithVal
+                        
+        else:
+            for i in range(numAttributes):
+                if hypothesis[i] != '?':
+                    if hypothesis[i] == instance[i]:
+                        misclassification += 1
+
+        if misclassification >= attrWithVal:
+            numWrong += 1 
+        
+        misclassification = 0
+        
+    return float(numWrong)/totalExamples
+
+def findClassification(hypothesis, attributeValues):
+    numAttributes = len(hypothesis) #also == to outcomeInstance in devAttributeValues[n]
+    totalExamples = len(attributeValues)
+    attrWithVal = numAttributes - hypothesis.count('?')
+    
+    for instance in attributeValues:
+        numEqual = 0
+        for i in range(numAttributes):
+            if hypothesis[i] != '?':
+                if hypothesis[i] == instance[i]:
+                    numEqual += 1
+            
+        if numEqual == attrWithVal:
+            print 'high'
+        else:
+            print 'low'
+        
+
+trainingData = readInputFile('9Cat-Train.labeled')
+devData = readInputFile('9Cat-Dev.labeled')
+testData = readInputFile(sys.argv[1])
+
+numAttributes = getNumAttributes(trainingData[0])
+
+attributes = getAttributes(trainingData[1])
+
+trainingAttributeValues = getAttributeValues(trainingData)
+devAttributeValues = getAttributeValues(devData)
+testAttributeValues = getAttributeValues(testData)
+
+baseHypothesis = [None] * numAttributes
+finalHypothesis, hypothesisTracker = findS(baseHypothesis, attributes, trainingAttributeValues)
+
+misclassificationRate = checkMisclass(finalHypothesis, devAttributeValues)
+
+questions1to5Calculations()
+
+printHypothesisTracker(hypothesisTracker)
+print misclassificationRate
+findClassification(finalHypothesis, testAttributeValues)
+
+

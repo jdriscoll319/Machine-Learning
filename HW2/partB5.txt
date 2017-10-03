@@ -1,0 +1,3 @@
+The list-then-eliminate algorithm leaves a version space the size of 2^(number of unique inputs left out of the training data). For example, for 4 binary attributes there are 16 unique inputs. We were given a training set of 11 unique inputs, leaving 5 possible inputs out. This resulted in a version space of size 2^5 = 32. The hypothesis in our version space represents the combination of all possible outcomes for the 5 exluded inputs with the 11 included inputs.  This means that test data that matches the training data will always match everything in the version space and test data that does not match the training set will always match exactly half of the version space.
+
+

@@ -1,0 +1,152 @@
+import sys
+import itertools
+
+def readInputFile(arg):
+    inputFile = open(arg, 'r')
+    inputList = inputFile.readlines()
+    inputFile.close()
+    return inputList
+
+#Questions 1-2 hardcoded. Don't need to to calculate based on unknown input
+def questions1to2Calculations():
+    inputSpace = 2**4
+    conceptSpace = 2**inputSpace
+    print inputSpace
+    print conceptSpace
+    
+#takes in a training feature and counts number of tabs - there is a tab after every attribute so really we're counting attributes
+def getNumAttributes(trainingFeature):
+    return trainingFeature.count('\t')
+
+#takes tab delimited string of attributes and parses them into a list
+def getAttributes(trainingFeature):
+    numAttributes = getNumAttributes(trainingFeature)
+    splitFeature = trainingFeature.split('\t')
+    trainingAttributes= []
+    
+    for i in splitFeature:
+        trainingAttributes.append(i[:i.find(' ')])
+    
+    return trainingAttributes
+
+#takes in list of data inputs and parses it into a list of lists    
+def getAttributeValues(data):
+    attributeValues = []
+    for i in data:
+        valueList = []
+        i = i.strip('\r\n')
+        splitFeature = i.split('\t')
+        for j in splitFeature:
+            valueList.append(j[j.find(' ')+1:])
+        
+        attributeValues.append(valueList)
+        
+    return attributeValues
+
+#Gender: Male/Female - 0/1
+#Age: Young/Old - 0/1
+#Student?: No/Yes - 0/1
+#Prev Declined?: No/Yes - 0/1
+def convertAttributeValues(attributeValues):
+    binAttributeValues = []
+    for instance in attributeValues:
+        bitVector = ''
+        for attribute in instance:
+            if attribute == 'Male':
+                bitVector += '0'
+            elif attribute == "Female":
+                bitVector += '1'
+            elif attribute == 'Young':
+                bitVector += '0'
+            elif attribute == "Old":
+                bitVector += '1'
+            elif attribute == 'No':
+                bitVector += '0'
+            elif attribute == "Yes":
+                bitVector += '1'
+            elif attribute == 'low':
+                bitVector += '0'
+            else: bitVector += '1'
+        
+        binAttributeValues.append(bitVector)  
+    return binAttributeValues
+                
+
+#builds a version space of 16 digit bit vectors
+def buildVersionSpace():
+    temp = itertools.product('01', repeat=16)
+    versionSpace = []
+    for i in temp:
+        versionSpace.append("".join(i))
+    
+    return versionSpace
+
+def calculateHypoBit(hypothesis):
+    bitVal = 0
+    
+    for i in range(len(hypothesis)-1):
+        if int(hypothesis[i]) == 1:
+            #print i
+            bitVal += 2 ** (3-i)
+        
+    return bitVal
+        
+#Gender: Male/Female - 0/1
+#Age: Young/Old - 0/1
+#Student?: No/Yes - 0/1
+#Prev Declined?: No/Yes - 0/1
+def listThenEliminate(trainingSet, versionSpace):
+    outcomeBit = 4
+    for instance in trainingSet:
+        bitSpot = calculateHypoBit(instance)
+        tempVersionSpace = []
+        for index, hypothesis in enumerate(versionSpace):
+            if instance[outcomeBit] == '1' and hypothesis[bitSpot] ==  '1':
+                tempVersionSpace.append(hypothesis)
+            elif instance[outcomeBit] == '0' and hypothesis[bitSpot] == '0':
+                tempVersionSpace.append(hypothesis)
+        
+        versionSpace = tempVersionSpace
+    
+    return versionSpace
+
+def castAVote(versionSpace, testData):
+
+    for instance in testData:
+        yes = 0
+        no = 0
+        bitSpot = calculateHypoBit(instance)
+        for h in versionSpace:
+            if h[bitSpot] == '1':
+                yes += 1
+            else: no += 1
+        print str(yes) + " " + str(no)
+        
+
+    
+trainingData = readInputFile('4Cat-Train.labeled')
+devData = readInputFile('4Cat-Dev.labeled')
+testData = readInputFile(sys.argv[1])
+
+numAttributes = getNumAttributes(trainingData[0])
+
+attributes = getAttributes(trainingData[1])
+
+trainingAttributeValues = getAttributeValues(trainingData)
+trainingAttributeValues = convertAttributeValues(trainingAttributeValues)
+
+devAttributeValues = convertAttributeValues(getAttributeValues(devData))
+
+testAttributeValues = convertAttributeValues(getAttributeValues(testData))
+
+versionSpace = buildVersionSpace()
+versionSpace = listThenEliminate(trainingAttributeValues, versionSpace)
+
+#print trainingAttributeValues
+#devAttributeValues = getAttributeValues(devData)
+#testAttributeValues = getAttributeValues(testData)
+questions1to2Calculations()
+print len(versionSpace)
+castAVote(versionSpace, devAttributeValues)
+castAVote(versionSpace, testAttributeValues)
+
