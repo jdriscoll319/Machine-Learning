@@ -1,6 +1,7 @@
 import sys
 import csv
 from math import log
+from copy import deepcopy
 
 plus = {"y", "yes", "A", "democrat", "before1950", "morethan3min", "fast", "expensive", "high", "Two", "large"}
 minus = {"n", "no", "notA", "republican", "after1950", "lessthan3min", "slow", "cheap", "low", "MoreThanTwo", "small"}
@@ -8,6 +9,7 @@ minus = {"n", "no", "notA", "republican", "after1950", "lessthan3min", "slow", "
 class Tree:
     def __init__(self):
         self.attribute = None
+        self.label = None
         self.data = None
         self.left = None
         self.right = None
@@ -89,11 +91,12 @@ def findBestAttr(classifier, data):
     attributes = data[0].keys()
     for attribute in attributes:
         #print "Calculating attr: ", attribute
-        if attribute != classifier: gain = informationGain(classifier, attribute, data)
-        #print "info gain: ", gain
-        if gain >= max_gain:
-            max_gain = gain
-            best_attr = attribute
+        if attribute != classifier: 
+            gain = informationGain(classifier, attribute, data)
+            print "info gain: ", gain
+            if gain >= max_gain:
+                max_gain = gain
+                best_attr = attribute
 
     return best_attr
 
@@ -102,18 +105,48 @@ def splitData(node):
     right = []
     for example in node.data:
         if example[node.attribute] in minus:
-            del example[node.attribute]
-            left.append(example)
+            left.append(deepcopy(example))
+            del left[-1][node.attribute]
         else:
-            del example[node.attribute]
-            right.append(example)
+            right.append(deepcopy(example))
+            del right[-1][node.attribute]
     
     return left, right
 
+def numPlusAndMinus(attribute, data):
+    num_plus, num_minus = 0,0
+    for example in data:
+        if example[attribute] in minus:
+            num_minus += 1
+        else: num_plus += 1
+    return num_minus, num_plus    
+
+def getAttributeValues(attribute, data):
+    attr_plus_val, attr_minus_val = '', ''
+    i = 0
+    while (len(attr_minus_val) == 0 or len(attr_plus_val) == 0) and i<len(data):
+        if data[i][attribute] in minus:
+            attr_minus_val = data[i][attribute]
+        elif data[i][attribute] in plus:
+            attr_plus_val = data[i][attribute]
+        i += 1
+        
+    return attr_minus_val, attr_plus_val
+
 def buildTree(root, classifier, data):
-    #TODO: do classification checks
-    #TODO: make sure there are attributes
+    
     root.data = data
+    classifier_minus_val, classifier_plus_val = getAttributeValues(classifier, data)
+    #TODO: do classification checks
+    minus_classifiers, plus_classifiers = numPlusAndMinus(classifier, data)
+    if plus_classifiers == 0:
+        root.label = classifier_minus_val
+        return
+    elif minus_classifiers == 0:
+        root.label = classifier_plus_val
+
+    #TODO: make sure there are attributes
+
     print "building root"
     root_attr = findBestAttr(classifier, data)
     if root_attr:
@@ -154,25 +187,30 @@ def buildTree(root, classifier, data):
     
     return
 
-def numPlusAndMinus(attribute, data):
-    num_plus, num_minus = 0,0
-    for example in data:
-        if example[attribute] in minus:
-            num_minus += 1
-        else: num_plus += 1
-    return num_minus, num_plus    
-
 def printTree(root_node, classifier):
     root_minus, root_plus = numPlusAndMinus(classifier, root_node.data)
     print "[{}+/{}-]".format(root_plus, root_minus)
 
-    if root.attribute:
-        root_attr_plus = len(root.right.data)
-        root_attr_minus = len(root.left.data)
-
-    root_attribute_plus_val = root_node.data[0][root.attribute]
-
-
+    if root_node.attribute:
+        root_attr_minus_val, root_attr_plus_val = getAttributeValues(root_node.attribute, root_node.data)
+        root_right_minus, root_right_plus = numPlusAndMinus(classifier, root_node.right.data)
+        root_left_minus, root_left_plus = numPlusAndMinus(classifier, root_node.left.data)    
+        print  "{} = {}: [{}+/{}-]".format(root_node.attribute, root_attr_plus_val, root_right_plus, root_right_minus)
+        if root_node.right.attribute:
+            right_attr_minus_val, right_attr_plus_val = getAttributeValues(root_node.right.attribute, root_node.data)
+            right_right_minus, right_right_plus = numPlusAndMinus(classifier, root_node.right.right.data)
+            right_left_minus, right_left_plus = numPlusAndMinus(classifier, root_node.right.left.data)
+            print  "| {} = {}: [{}+/{}-]".format(root_node.right.attribute, right_attr_plus_val, right_right_plus, right_right_minus)
+            print  "| {} = {}: [{}+/{}-]".format(root_node.right.attribute, right_attr_minus_val, right_left_plus, right_left_minus)
+        
+        print  "{} = {}: [{}+/{}-]".format(root_node.attribute, root_attr_minus_val, root_left_plus, root_left_minus)
+        if root_node.left.attribute:
+            left_attr_minus_val, left_attr_plus_val = getAttributeValues(root_node.left.attribute, root_node.data)
+            left_right_minus, left_right_plus = numPlusAndMinus(classifier, root_node.left.right.data)
+            left_left_minus, left_left_plus = numPlusAndMinus(classifier, root_node.left.left.data)
+            print  "| {} = {}: [{}+/{}-]".format(root_node.left.attribute, left_attr_plus_val, left_right_plus, left_right_minus)
+            print  "| {} = {}: [{}+/{}-]".format(root_node.left.attribute, left_attr_minus_val, left_left_plus, left_left_minus)
+        
 
 classifier, train_data = parseInputFile(sys.argv[1])
 ID3 = Tree()
@@ -185,20 +223,3 @@ print ID3.attribute
 print ID3.left.attribute, ID3.right.attribute
 printTree(ID3, classifier)
 
-
-
-'''
-root.data = train_data
-if all_classifiers !=0 and all_classifiers !=0 and attributes exist
-    root.attribute = findBestAttribute if FBA >= 0.1
-        root.left.data = FBA1_minus
-        root.right.data = FBA1_plus
-
-    root.left.attribute = findBestAttribute if FBA2 >= 0.1
-        root.left.left.data = FBA2_minus
-        root.left.right.data = FBA2_plus
-
-    root.right.attribute = findBestAttribute if FBA3 >= 0.1
-        root.right.left.data = FBA3_minus
-        root.right.right.data = FBA3_plus
-'''
