@@ -259,6 +259,38 @@ def printTree(root_node, classifier):
             print  "| {} = {}: [{}+/{}-]".format(root_node.left.attribute, left_attr_plus_val, left_right_plus, left_right_minus)
             print  "| {} = {}: [{}+/{}-]".format(root_node.left.attribute, left_attr_minus_val, left_left_plus, left_left_minus)
         
+def getTrainingError(root, classifier):
+    total = len(root.data)
+    leaf_sum = 0.
+    minus, plus = 0., 0.
+
+    if not root.attribute:
+        minus, plus = numPlusAndMinus(classifier, root.data)
+        return min(minus/total, plus/total)
+
+    if not root.right.attribute:
+        minus, plus = numPlusAndMinus(classifier, root.right.data)
+        leaf_sum += min(minus, plus)
+    else:
+        #right left
+        minus, plus = numPlusAndMinus(classifier, root.right.left.data)
+        leaf_sum += min(minus, plus)
+        #right right
+        minus, plus = numPlusAndMinus(classifier, root.right.right.data)
+        leaf_sum += min(minus, plus)
+
+    if not root.left.attribute:
+        minus, plus = numPlusAndMinus(classifier, root.left.data)
+        leaf_sum += min(minus, plus)
+    else:
+        #left left
+        minus, plus = numPlusAndMinus(classifier, root.left.left.data)
+        leaf_sum += min(minus, plus)
+        #left right
+        minus, plus = numPlusAndMinus(classifier, root.left.right.data)
+        leaf_sum += min(minus, plus)
+
+    return leaf_sum/total
 
 classifier, train_data = parseInputFile(sys.argv[1])
 ID3 = Tree()
@@ -270,4 +302,5 @@ buildTree(ID3, classifier, train_data)
 print ID3.attribute
 print ID3.left.attribute, ID3.right.attribute
 printTree(ID3, classifier)
+print "error(train): ", getTrainingError(ID3, classifier)
 
