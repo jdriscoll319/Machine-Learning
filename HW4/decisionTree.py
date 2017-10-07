@@ -134,19 +134,31 @@ def getAttributeValues(attribute, data):
     return attr_minus_val, attr_plus_val
 
 def buildTree(root, classifier, data):
-    
     root.data = data
+    
+    #determine what the positive and negative labels are
     classifier_minus_val, classifier_plus_val = getAttributeValues(classifier, data)
-    #TODO: do classification checks
+
+    #Check to see if all positive or negative labels
     minus_classifiers, plus_classifiers = numPlusAndMinus(classifier, data)
     if plus_classifiers == 0:
         root.label = classifier_minus_val
         return
     elif minus_classifiers == 0:
         root.label = classifier_plus_val
+        return
+    
+    #label root node with most common classifier
+    if plus_classifiers > minus_classifiers:
+        root.label = classifier_plus_val
+    else:
+        root.label = classifier_minus_val
 
-    #TODO: make sure there are attributes
+    #make sure we have actual attributes
+    if len(data[0]) == 1:
+        return
 
+    #Find best attribute to split the root node on
     print "building root"
     root_attr = findBestAttr(classifier, data)
     if root_attr:
@@ -154,36 +166,72 @@ def buildTree(root, classifier, data):
     else: return
     print "Root attribute: ", root.attribute
 
+    #Build root branches, label them with their most common classifiers
     root.left = Tree()
     root.right = Tree()
     root.left.data, root.right.data = splitData(root)
-    #print "Left Branch data: ", root.left.data
-    #print "Right Branch data: ", root.right.data
+    right_minus_classifiers, right_plus_classifiers = numPlusAndMinus(classifier, root.right.data)
+    left_minus_classifiers, left_plus_classifiers = numPlusAndMinus(classifier, root.left.data)
 
+    if right_minus_classifiers > right_plus_classifiers:
+        root.right.label = classifier_minus_val
+    else: root.right.label = classifier_plus_val
+
+    if left_minus_classifiers > left_plus_classifiers:
+        root.left.label = classifier_minus_val
+    else: root.left.label = classifier_plus_val
+
+    #Find best attribute to split left branch on
     print "Finding left branch attribute: "
     left_attr = findBestAttr(classifier, root.left.data)
     if left_attr:
         root.left.attribute = left_attr
     print "Left Branch Attribute: ", root.left.attribute
 
+    #Find best attribute to split right branch on
     print "finding right branch attribute"
     right_attr = findBestAttr(classifier, root.right.data)
     if right_attr:
         root.right.attribute = right_attr
     print "Right branch attribute: ", root.right.attribute
 
+    #If we couldn't split either branch we're done
     if(not root.right.attribute and not root.left.attribute):
         return
 
+    #Build leaf nodes and label them
     print "Splitting branches"
     if root.right.attribute:
         root.right.right = Tree()
         root.right.left = Tree()
         root.right.left.data, root.right.right.data = splitData(root.right)
+        
+        right_right_minus_classifiers, right_right_plus_classifiers = numPlusAndMinus(classifier, root.right.right.data)
+        right_left_minus_classifiers, right_left_plus_classifiers = numPlusAndMinus(classifier, root.right.left.data)
+
+        if right_right_minus_classifiers > right_right_plus_classifiers:
+            root.right.right.label = classifier_minus_val
+        else: root.right.right.label = classifier_plus_val
+
+        if right_left_minus_classifiers > right_left_plus_classifiers:
+            root.right.left.label = classifier_minus_val
+        else: root.right.left.label = classifier_plus_val
+
     if root.left.attribute:
         root.left.left = Tree()
         root.left.right = Tree()
         root.left.left.data, root.left.right.data = splitData(root.left)
+
+        left_right_minus_classifiers, left_right_plus_classifiers = numPlusAndMinus(classifier, root.left.right.data)
+        left_left_minus_classifiers, left_left_plus_classifiers = numPlusAndMinus(classifier, root.left.left.data)
+
+        if left_right_minus_classifiers > left_right_plus_classifiers:
+            root.left.right.label = classifier_minus_val
+        else: root.left.right.label = classifier_plus_val
+
+        if left_left_minus_classifiers > left_left_plus_classifiers:
+            root.left.left.label = classifier_minus_val
+        else: root.left.left.label = classifier_plus_val
     
     return
 
