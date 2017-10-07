@@ -79,7 +79,7 @@ def informationGain(classifier, candidate_attribute, data):
         else:
             num_plus += 1
             plus_examples.append(example)
-    print "Finding Info gain for: ", candidate_attribute
+    #print "Finding Info gain for: ", candidate_attribute
     h_of_cap = getEntropy(classifier, plus_examples)
     h_of_cam = getEntropy(classifier, minus_examples)
 
@@ -93,7 +93,7 @@ def findBestAttr(classifier, data):
         #print "Calculating attr: ", attribute
         if attribute != classifier: 
             gain = informationGain(classifier, attribute, data)
-            print "info gain: ", gain
+            #print "info gain: ", gain
             if gain >= max_gain:
                 max_gain = gain
                 best_attr = attribute
@@ -159,12 +159,12 @@ def buildTree(root, classifier, data):
         return
 
     #Find best attribute to split the root node on
-    print "building root"
+    #print "building root"
     root_attr = findBestAttr(classifier, data)
     if root_attr:
         root.attribute = root_attr
     else: return
-    print "Root attribute: ", root.attribute
+    #print "Root attribute: ", root.attribute
 
     #Build root branches, label them with their most common classifiers
     root.left = Tree()
@@ -182,25 +182,25 @@ def buildTree(root, classifier, data):
     else: root.left.label = classifier_plus_val
 
     #Find best attribute to split left branch on
-    print "Finding left branch attribute: "
+    #print "Finding left branch attribute: "
     left_attr = findBestAttr(classifier, root.left.data)
     if left_attr:
         root.left.attribute = left_attr
-    print "Left Branch Attribute: ", root.left.attribute
+    #print "Left Branch Attribute: ", root.left.attribute
 
     #Find best attribute to split right branch on
-    print "finding right branch attribute"
+    #print "finding right branch attribute"
     right_attr = findBestAttr(classifier, root.right.data)
     if right_attr:
         root.right.attribute = right_attr
-    print "Right branch attribute: ", root.right.attribute
+    #print "Right branch attribute: ", root.right.attribute
 
     #If we couldn't split either branch we're done
     if(not root.right.attribute and not root.left.attribute):
         return
 
     #Build leaf nodes and label them
-    print "Splitting branches"
+    #print "Splitting branches"
     if root.right.attribute:
         root.right.right = Tree()
         root.right.left = Tree()
@@ -292,15 +292,70 @@ def getTrainingError(root, classifier):
 
     return leaf_sum/total
 
+def testTree(test_data, root, classifier):
+    classifier_minus_val, classifier_plus_val = getAttributeValues(classifier, test_data)
+    total = len(test_data)
+    sum_incorrect = 0.
+
+    #check for bad dataset
+    #Check to see if all positive or negative labels
+    minus_classifiers, plus_classifiers = numPlusAndMinus(classifier, test_data)
+    if plus_classifiers == 0 or minus_classifiers == 0 or len(test_data[0]) == 1:
+        for example in test_data:
+            if example[classifier] != root.label:
+                sum_incorrect += 1
+        return sum_incorrect/total
+    
+    if not root.attribute:
+        for example in test_data:
+            if example[classifier] != root.label:
+                sum_incorrect += 1
+        return sum_incorrect/total
+    else:
+        for example in test_data:
+            if root.attribute not in example:
+                if example[classifier] != root.label:
+                    sum_incorrect += 1
+            
+            else:
+                #check for negative
+                if example[root.attribute] in minus:
+                    if not root.left.attribute or root.left.attribute not in example:
+                        if example[classifier] != root.left.label:
+                            sum_incorrect += 1
+                    else:
+                        #check for negative negative
+                        if example[root.left.attribute] in minus and example[classifier] != root.left.left.label:
+                            sum_incorrect += 1
+                        #check for negative positive
+                        elif example[root.left.attribute] in plus and example[classifier] != root.left.right.label:
+                            sum_incorrect += 1
+                
+                #check for positive
+                elif example[root.attribute] in plus:
+                    if not root.right.attribute or root.right.attribute not in example:
+                        if example[classifier] != root.right.label:
+                            sum_incorrect += 1
+                    else:
+                        #check for positive negative
+                        if example[root.right.attribute] in minus and example[classifier] != root.right.left.label:
+                            sum_incorrect += 1
+                        #check for positive positive
+                        elif example[root.right.attribute] in plus and example[classifier] != root.right.right.label:
+                            sum_incorrect += 1
+    
+    return sum_incorrect/total
+
 classifier, train_data = parseInputFile(sys.argv[1])
+test_classifier, test_data = parseInputFile(sys.argv[2])
 ID3 = Tree()
 
 #print train_data[0]
 
 buildTree(ID3, classifier, train_data)
 
-print ID3.attribute
-print ID3.left.attribute, ID3.right.attribute
+#print ID3.attribute
+#print ID3.left.attribute, ID3.right.attribute
 printTree(ID3, classifier)
 print "error(train): ", getTrainingError(ID3, classifier)
-
+print "error(test): ", testTree(test_data, ID3, classifier)
