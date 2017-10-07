@@ -44,5 +44,5 @@ def getEntropyandError(classList):
 trainData = readInputFile(sys.argv[1])
 classList = getClass(trainData)
 entropy, error = getEntropyandError(classList)
-print "entropy: ", entropy
-print "error: ", error
+print "entropy:", entropy
+print "error:", error
