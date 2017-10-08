@@ -3,6 +3,9 @@ I spoke with Josh Bennett about tree depth. Spoke with Andrew Wong about entropy
 
 Did you give any help whatsoever to anyone in solving this assignment? Yes
 Spoke with Andrew Wong about output formatting.
+Discussed tree structure and running through test data with Jin Zhu.
+Discussed information gain equation with Luke Eerens.
+Discussed information gain equation and error calculatinos with Jen Isaza.
 
 Did you find or come across code that implements any part of this assignment? Yes
 Looked up how to build a basic tree class in python.
