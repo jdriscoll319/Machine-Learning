@@ -36,7 +36,7 @@ def create_output_layer(num_neurons, input_size):
 
 def train(training_examples, training_labels, hidden_layer, output_layer):
     error = 1
-    f=open("error.txt", 'w')
+    #f=open("error.txt", 'w')
     while error >= .0135:
         error = 0
         for index, example in enumerate(training_examples):
@@ -83,9 +83,9 @@ def train(training_examples, training_labels, hidden_layer, output_layer):
         #print "output error term:", output_layer[0].error_term
         error *= .5
         print error
-        f.write(str(error))
-        f.write('\n')
-    f.close()
+        #f.write(str(error))
+        #f.write('\n')
+    #f.close()
 
 
 
@@ -99,8 +99,8 @@ hidden_layer = create_hidden_layer(hidden_layer_size, num_attributes)
 output_layer = create_output_layer(output_layer_size, hidden_layer_size)
 
 train(training_examples, training_labels, hidden_layer, output_layer)
-
-f = open("prediction.txt", 'w')
+print "TRAINING COMPLETED! NOW PREDICTING."
+#f = open("prediction.txt", 'w')
 for example in dev_examples:
     #run examples through first layer
     #print "Example:", training_examples[index]
@@ -116,6 +116,6 @@ for example in dev_examples:
     
     for neuron in output_layer:
         neuron.get_ouput(hidden_output)
-        f.write(str(neuron.output*100))
-        f.write('\n')
-f.close()
+        print neuron.output*100
+        #f.write('\n')
+#f.close()

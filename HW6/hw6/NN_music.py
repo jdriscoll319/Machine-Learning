@@ -5,8 +5,9 @@ import parse_input
 from neuron import Neuron
 
 #Set neural net constant values.
-step_size = 0.5
-hidden_layer_size = 10
+#best so far: .1, 3, 1, 7.5
+step_size = 0.1
+hidden_layer_size = 3
 output_layer_size = 1
 
 ##normalize data to [0,1]
@@ -38,9 +39,9 @@ def create_output_layer(num_neurons, input_size):
     return layer
 
 def train(training_examples, training_labels, hidden_layer, output_layer):
-    error = 5
-    f=open("error.txt", 'w')
-    while error >= 4:
+    error = 100
+    #f=open("error.txt", 'w')
+    while error >= 7.5:
         error = 0
         for index, example in enumerate(training_examples):
         #for index in range(0,1):
@@ -81,13 +82,13 @@ def train(training_examples, training_labels, hidden_layer, output_layer):
                 ##print "output neuron delta weight:", neuron.delta_weights
                 ##print "output neuron weights:", neuron.weights
 
-        print "output from last example:", output_layer[0].output
+        #print "output from last example:", output_layer[0].output
         #print "output error term:", output_layer[0].error_term
         error *= .5
         print error
-        f.write(str(error))
-        f.write('\n')
-    f.close()
+        #f.write(str(error))
+        #f.write('\n')
+    #f.close()
 
 
 
@@ -96,16 +97,13 @@ attributes, training_examples, training_labels, dev_examples = parse_input.parse
 num_attributes = len(attributes)
 
 training_examples, dev_examples = normalize(training_examples, dev_examples)
-print training_examples
-print training_labels
-print dev_examples
 
 hidden_layer = create_hidden_layer(hidden_layer_size, num_attributes)
 output_layer = create_output_layer(output_layer_size, hidden_layer_size)
 
 train(training_examples, training_labels, hidden_layer, output_layer)
-
-f = open("prediction.txt", 'w')
+print "TRAINING COMPLETED! NOW PREDICTING"
+#f = open("prediction.txt", 'w')
 for example in dev_examples:
     #run examples through first layer
     #print "Example:", training_examples[index]
@@ -121,11 +119,9 @@ for example in dev_examples:
     
     for neuron in output_layer:
         neuron.get_ouput(hidden_output)
-        print neuron.output
+        #print neuron.output
         if neuron.output > 0.5:
-            f.write('Yes')
-            f.write('\n')
+            print "yes"
         else:
-            f.write('No')
-            f.write('\n')
-f.close()
+            print "no"
+#f.close()
