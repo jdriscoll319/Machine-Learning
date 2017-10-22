@@ -16,7 +16,7 @@ def create_hidden_layer(num_neurons, input_size):
 
 #create output layer of variable size
 def create_output_layer(num_neurons, input_size):
-    layer = [Neuron(i, "outer", step_size, input_size) for i in range(1, num_neurons+1)]
+    layer = [Neuron(i, "output", step_size, input_size) for i in range(1, num_neurons+1)]
     return layer
 
 
@@ -28,33 +28,43 @@ num_attributes = len(attributes)
 #create the two layers
 hidden_layer = create_hidden_layer(hidden_layer_size, num_attributes)
 output_layer = create_output_layer(output_layer_size, hidden_layer_size)
-for neuron in hidden_layer:
-    print neuron.weights
-hidden_output = []
-for index, example in enumerate(training_examples):
-    #run examples through first layer
-    for neuron in hidden_layer:
-        print neuron.index
-        neuron.get_ouput(example)
-        hidden_output.append(neuron.output)
-    
-    #take ouputs from first layer and input into output layer
-    #get error term for output layer
-    for neuron in output_layer:
-        neuron.get_ouput(hidden_output)
-        neuron.get_error_term(training_labels[index])
-    
-    ##get error term for hidden layer
-    #update weights
-    for neuron in hidden_layer:
-        neuron.get_error_term(None, output_layer)
-        neuron.update_weights
-    
-    #update weights
-    for neuron in output_layer:
-        neuron.update_weights
 
-##print output_layer[0].output
+for i in range(0, 100):
+    for index, example in enumerate(training_examples):
+        #run examples through first layer
+        hidden_output = []
+        for neuron in hidden_layer:
+            neuron.get_ouput(example)
+            ##print "Hidden Neuron output:", neuron.output
+            hidden_output.append(neuron.output)
+        
+        #take ouputs from first layer and input into output layer
+        #get error term for output layer
+        
+        for neuron in output_layer:
+            neuron.get_ouput(hidden_output)
+            ##print "Output Neuron output:", neuron.output
+            neuron.get_error_term(training_labels[index])
+            ##print "Out Neuron error:", neuron.error_term
+        
+        ##get error term for hidden layer
+        #update weights
+        
+        for neuron in hidden_layer:
+            neuron.get_error_term(None, output_layer)
+            ##print "Hidden neuron error:", neuron.error_term
+            neuron.update_weights()
+            ##print "Hidden neuron delta weights:", neuron.delta_weights
+            ##print "Hidden neuron weights:", neuron.weights
+        
+        #update weights
+        for neuron in output_layer:
+            neuron.update_weights()
+            ##print "output neuron delta weight:", neuron.delta_weights
+           ##print "output neuron weights:", neuron.weights
+
+    print output_layer[0].output
+    print output_layer[0].error_term
     
     
 
