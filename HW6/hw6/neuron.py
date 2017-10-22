@@ -3,7 +3,8 @@ import math
 
 class Neuron:
     def __init__(self, index, layer, step_size, num_inputs):
-        self.weights = numpy.random.normal(0.0, .04, num_inputs+1)
+        #self.weights = [0.01] * (num_inputs + 1)
+        self.weights = numpy.random.normal(0.0, .01, num_inputs+1)
         self.delta_weights = [0] * (num_inputs+1)
         self.output = None
         self.layer = layer
@@ -16,9 +17,11 @@ class Neuron:
         temp = example[:]
         temp.insert(0, 1.0)
         self.last_input = temp
-        ##print "weights:", len(self.weights), "| input:", len(temp)
+        #print "weights:", self.weights
         net = numpy.dot(self.weights, temp)
+        #print "net:", net
         self.output = 1 / (1 + math.exp(-1. * net))
+        #print "output:", self.index, self.output
 
     def get_error_term(self, target_value=None, output_layer=None):
         if self.layer == 'output':
@@ -26,6 +29,7 @@ class Neuron:
         else:
             sum_errors = 0
             for output_node in output_layer:
+                #print "summation:", sum_errors
                 sum_errors += output_node.weights[self.index] * output_node.error_term
             self.error_term = self.output * (1 - self.output) * sum_errors
 
