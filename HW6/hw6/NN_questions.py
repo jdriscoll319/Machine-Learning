@@ -1,0 +1,1 @@
+print "a\na\nyes\nno\nyes\nno\nno\nb\n25\nno"
