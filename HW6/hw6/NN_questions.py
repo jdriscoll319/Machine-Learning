@@ -1,1 +1,1 @@
-print "a\na\nyes\nno\nyes\nno\nyes\nb\n25\nno"
+print "b\na\nyes\nyes\nno\nno\nyes\nb\nb\nno"

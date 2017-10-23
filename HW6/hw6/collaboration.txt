@@ -1,7 +1,8 @@
 Did you receive any help whatsoever from anyone in solving this assignment? Yes
-Attended office hours with both Daniel and Hyun Ah
+Attended office hours with both Daniel and Hyun Ah.
 
 Did you give any help whatsoever to anyone in solving this assignment? Yes
 Helped clarify the steps of Back Propagation for David Robinson.
+Helped Jin Zhu with data processing.
 
 Did you find or come across code that implements any part of this assignment? No

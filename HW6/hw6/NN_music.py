@@ -102,7 +102,7 @@ hidden_layer = create_hidden_layer(hidden_layer_size, num_attributes)
 output_layer = create_output_layer(output_layer_size, hidden_layer_size)
 
 train(training_examples, training_labels, hidden_layer, output_layer)
-print "TRAINING COMPLETED! NOW PREDICTING"
+print "TRAINING COMPLETED! NOW PREDICTING."
 #f = open("prediction.txt", 'w')
 for example in dev_examples:
     #run examples through first layer
