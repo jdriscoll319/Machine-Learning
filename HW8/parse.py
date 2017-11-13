@@ -25,6 +25,15 @@ def get_distinct_vocabulary(file_list):
     distinct_vocab = set(vocabulary[:])
     return distinct_vocab
 
+def get_full_vocabulary(file_list):
+    vocabulary = []
+    for document in file_list:
+        doc = open(document, 'r')
+        vocabulary += doc.read().lower().splitlines()
+        doc.close()
+
+    return vocabulary
+
 #takes in a file list and splits into lists of liberal and conservative files
 def get_subset_files(file_list):
     lib = []
