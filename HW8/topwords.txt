@@ -1,0 +1,3 @@
+The two lists are very similar - the top 9 from each list line up exactly. 
+18/20 in total are the same but may not be in the same position.
+All of the words are common english "filler" words (conjunctions, prepositions, etc.) that don't really contain any meaning.
