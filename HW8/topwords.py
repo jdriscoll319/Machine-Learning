@@ -4,7 +4,7 @@ import probabilities
 
 def print_max_probabilities(max_prob_list, max_prob_dict):
     for val in max_prob_list:
-        print max_prob_dict[val], val
+        print max_prob_dict[val], "%.4f" % val
 
 def get_top_twenty(lib_dict, con_dict):
     lib_max_dict = {}
@@ -44,8 +44,8 @@ vocab_con = parse.get_subset_vocab(con_files)
 
 p_lib, p_con = probabilities.probability_outcome(training_files, lib_files)
 
-p_word_lib = probabilities.probability_word_given_outcome(distinct_vocab, vocab_lib)
-p_word_con = probabilities.probability_word_given_outcome(distinct_vocab, vocab_con)
+p_word_lib = probabilities.probability_word_given_outcome(distinct_vocab, vocab_lib, 1.0)
+p_word_con = probabilities.probability_word_given_outcome(distinct_vocab, vocab_con, 1.0)
 
 lib_max_prob_dict, con_max_prob_dict = get_top_twenty(p_word_lib, p_word_con)
 

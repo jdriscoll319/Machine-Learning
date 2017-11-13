@@ -1,0 +1,3 @@
+The words in list are much more unique than those in topwords. 
+This makes sense as we're maximizing the probability of a word appearing in one blog subset and minimizing the appearance of it in the opposite subset.
+There are no overlapping words between the two lists, unlike in topwords which was mostly overlapping.

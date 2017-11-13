@@ -1,4 +1,6 @@
 As the smoothing value increases the accuracy of the classifier decreases.
-0.1 made the classifier better. 0.01 was even better.
-0.5 and 1.0 produced the same result.
-5.0 decreased the accuracy of the classifier.
+q=0.1 made the classifier better. q=0.01 was even better.
+q=0.5 and q=1.0 produced the same result.
+q=5.0 decreased the accuracy of the classifier.
+q=0 resulted in a failure in my code. There are likely cases where liberal words do not appear in conservative blogs and vice versa. 
+This will result in log(0) and is the reason we have been smoothing in the first place.
