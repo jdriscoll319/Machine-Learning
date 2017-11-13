@@ -14,8 +14,8 @@ vocab_con = parse.get_subset_vocab(con_files)
 
 p_lib, p_con = probabilities.probability_outcome(training_files, lib_files)
 
-p_word_lib = probabilities.probability_word_given_outcome(distinct_vocab, vocab_lib)
-p_word_con = probabilities.probability_word_given_outcome(distinct_vocab, vocab_con)
+p_word_lib = probabilities.probability_word_given_outcome(distinct_vocab, vocab_lib, 1.0)
+p_word_con = probabilities.probability_word_given_outcome(distinct_vocab, vocab_con, 1.0)
 
 ##test
 correct = 0

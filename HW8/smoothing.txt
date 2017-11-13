@@ -1,0 +1,4 @@
+As the smoothing value increases the accuracy of the classifier decreases.
+0.1 made the classifier better. 0.01 was even better.
+0.5 and 1.0 produced the same result.
+5.0 decreased the accuracy of the classifier.

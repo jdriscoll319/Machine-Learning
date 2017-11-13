@@ -4,7 +4,6 @@ import probabilities
 
 def find_top_n(num_words, vocabulary):
     vocab_dict = {}
-    print num_words
     for word in vocabulary:
         if word in vocab_dict:
             vocab_dict[word] += 1
@@ -32,7 +31,6 @@ training_files, testing_files = parse.parse_input_files(sys.argv[1], sys.argv[2]
 distinct_vocab= parse.get_distinct_vocabulary(training_files)
 full_vocab = parse.get_full_vocabulary(training_files)
 top_words = find_top_n(int(sys.argv[3]), full_vocab)
-print top_words
 lib_files, con_files = parse.get_subset_files(training_files)
 
 vocab_lib = parse.get_subset_vocab(lib_files)
@@ -45,8 +43,8 @@ for word in top_words:
 
 p_lib, p_con = probabilities.probability_outcome(training_files, lib_files)
 
-p_word_lib = probabilities.probability_word_given_outcome(distinct_vocab, vocab_lib)
-p_word_con = probabilities.probability_word_given_outcome(distinct_vocab, vocab_con)
+p_word_lib = probabilities.probability_word_given_outcome(distinct_vocab, vocab_lib, 1.0)
+p_word_con = probabilities.probability_word_given_outcome(distinct_vocab, vocab_con, 1.0)
 
 
 correct = 0
