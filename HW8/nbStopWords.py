@@ -1,9 +1,6 @@
 import sys
 import parse
 import probabilities
-import time
-
-start_time = time.time()
 
 def find_top_n(num_words, vocabulary):
     vocab_dict = {}
@@ -66,4 +63,3 @@ for doc in testing_files:
 
 
 print "Accuracy: %.4f" % (float(correct)/len(testing_files))
-print("--- %s seconds ---" % (time.time() - start_time))
