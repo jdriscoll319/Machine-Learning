@@ -1,0 +1,3 @@
+There is no improvement in the classification on split.test until you remove the 24 most common words from split.train.
+The algorithm stops making improvements after the 36 most common words are removed from split.train.
+The algorithm also starts to take much longer as you increase the number of words to remove. There is probably a more efficient way to code this than my approach.
