@@ -54,13 +54,13 @@ def parse_hmm_emit(emit_file):
         ##emit_parsed.append(dist_parsed)
     return emit_parsed
 
-#returns a dictionary of prior probabilities
+#returns a list of prior probabilities
 def parse_hmm_prior(prior_file):
     pf = open(prior_file, 'r')
     prior_list = pf.read().splitlines()
     pf.close()
-    prior_parsed = {}
+    prior_parsed = []
     for prior in prior_list:
         temp = prior.split()
-        prior_parsed[temp[0]] = temp[1]
+        prior_parsed.append(temp[1])
     return prior_parsed
