@@ -22,7 +22,7 @@ def parse_hmm_trans(trans_file):
         for index, val in enumerate(temp):
             if index != 0:
                 prob = val.split(':')
-                dist_parsed.append(prob[1])
+                dist_parsed.append(float(prob[1]))
         trans_parsed.append(dist_parsed) 
 
     return trans_parsed
@@ -44,7 +44,7 @@ def parse_hmm_emit(emit_file):
                 dist_parsed.append(val)
             else:
                 prob = val.split(':')
-                dist_dict[prob[0]] = prob[1]
+                dist_dict[prob[0]] = float(prob[1])
         emit_parsed.append(dist_dict)  ##change to dist_parsed and uncomment below for list of list w/ dict - [ [VD, {}], ...]
         ##emit_parsed.append(dist_parsed)
     return emit_parsed
@@ -57,5 +57,5 @@ def parse_hmm_prior(prior_file):
     prior_parsed = []
     for prior in prior_list:
         temp = prior.split()
-        prior_parsed.append(temp[1])
+        prior_parsed.append(float(temp[1]))
     return prior_parsed
