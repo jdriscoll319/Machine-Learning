@@ -27,8 +27,8 @@ def parse_hmm_trans(trans_file):
             else:
                 prob = val.split(':')
                 dist_dict[prob[0]] = prob[1]
-        dist_parsed.append(dist_dict)
-        trans_parsed.append(dist_parsed)
+        trans_parsed.append(dist_dict) ##change to dist_parsed and uncomment below for list of list w/ dict - [ [VD, {}], ...]
+        ##trans_parsed.append(dist_parsed)
 
     return trans_parsed
 
@@ -50,8 +50,8 @@ def parse_hmm_emit(emit_file):
             else:
                 prob = val.split(':')
                 dist_dict[prob[0]] = prob[1]
-        dist_parsed.append(dist_dict)
-        emit_parsed.append(dist_parsed)
+        emit_parsed.append(dist_dict)  ##change to dist_parsed and uncomment below for list of list w/ dict - [ [VD, {}], ...]
+        ##emit_parsed.append(dist_parsed)
     return emit_parsed
 
 #returns a dictionary of prior probabilities
