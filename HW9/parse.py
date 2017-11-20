@@ -10,8 +10,7 @@ def parse_dev(dev_file):
     return dev_parsed
 
 #return a list of lists
-#first element of inner list is the state
-#second element is a dictionary with all of the transistion probabilities
+#inner list is ordered transistion probabilities
 def parse_hmm_trans(trans_file):
     tf = open(trans_file, 'r')
     trans_list = tf.read().splitlines()
@@ -20,15 +19,11 @@ def parse_hmm_trans(trans_file):
     for dist in trans_list:
         temp = dist.split()
         dist_parsed = []
-        dist_dict = {}
         for index, val in enumerate(temp):
-            if index == 0:
-                dist_parsed.append(val)
-            else:
+            if index != 0:
                 prob = val.split(':')
-                dist_dict[prob[0]] = prob[1]
-        trans_parsed.append(dist_dict) ##change to dist_parsed and uncomment below for list of list w/ dict - [ [VD, {}], ...]
-        ##trans_parsed.append(dist_parsed)
+                dist_parsed.append(prob[1])
+        trans_parsed.append(dist_parsed) 
 
     return trans_parsed
 
