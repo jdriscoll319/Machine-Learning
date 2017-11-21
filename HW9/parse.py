@@ -59,3 +59,13 @@ def parse_hmm_prior(prior_file):
         temp = prior.split()
         prior_parsed.append(float(temp[1]))
     return prior_parsed
+
+def parse_pos(prior_file):
+    pf = open(prior_file, 'r')
+    prior_list = pf.read().splitlines()
+    pf.close()
+    prior_parsed = []
+    for prior in prior_list:
+        temp = prior.split()
+        prior_parsed.append(temp[0])
+    return prior_parsed
