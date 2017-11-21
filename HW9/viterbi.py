@@ -7,46 +7,54 @@ from logsum import log_sum
 import parse
 import math
 
-def print_tagged_sentence(sentence, state_sequence):
+def print_tagged_sentence(sentence, state_sequence, states):
     tagged_sentence = ""
     for index, word in enumerate(sentence):
+        print state_sequence[index]
         if index != len(sentence)-1:
-            tagged_sentence += (word + '_' + state_sequence[index] + ' ')
+            tagged_sentence += (word + '_' + states[state_sequence[index]] + ' ')
         else:
-            tagged_sentence += (word + '_' + state_sequence[index])
+            tagged_sentence += (word + '_' + states[state_sequence[index]])
     print tagged_sentence
     
 
 def viterbi(sentence_l, prior_l, trans_ll, emit_ld, pos_l):
     for sentence in sentence_l:
-        ##viterbi = [[None]*10]*len(sentence)
+        viterbi = [[0 for i in range(len(sentence))] for i in range(8)]
         Q_star = [[0 for i in range(len(sentence))] for i in range(8)]
-        viterbi = []
+        #viterbi = []
         #Q_star = []
         for index, word in enumerate(sentence):
             if index == 0:
                 for i in range(0, 8):
-                    #viterbi[i][index] = math.log(prior_l[i]) + math.log(emit_ld[i][word])
-                    Q_star[i][index] = pos_l[i]
-                    viterbi.append( math.log(prior_l[i]) + math.log(emit_ld[i][word]) )
+                    viterbi[i][index] = math.log(prior_l[i]) + math.log(emit_ld[i][word])
+                    Q_star[i][index] = i
+                    #viterbi.append( math.log(prior_l[i]) + math.log(emit_ld[i][word]) )
                     #print viterbi
-                    #Q_star.append(pos_l[i])
+                #Q_star.append(pos_l[viterbi.index(max(viterbi))])
 
             else:
                 temp_vit = [0 for x in range(8)]
                 for i in range(0, 8):
                     temp = [0 for x in range(8)]
                     for j in range(0, 8):
-                        temp[j] = viterbi[j] + math.log(trans_ll[j][i]) + math.log(emit_ld[i][word])
+                        #temp[j] = viterbi[j] + math.log(trans_ll[j][i]) + math.log(emit_ld[i][word])
+                        temp[j] = viterbi[j][index-1] + math.log(trans_ll[j][i]) + math.log(emit_ld[i][word])
                     
-                    temp_vit[i] = max(temp)
-                    Q_star[i][index] = pos_l[temp.index(max(temp))]
+                    #temp_vit[i] = max(temp)
+                    viterbi[i][index] = max(temp)
+                    Q_star[i][index] = temp.index(max(temp))
                 
                 #print "temp vit: ", temp_vit
-                viterbi[:] = temp_vit[:]
-
-        max_state = viterbi.index(max(viterbi))
-        #print_tagged_sentence(sentence, Q_star[max_state])
+                #viterbi[:] = temp_vit[:]
+                #Q_star.append(viterbi.index(max(viterbi)))
+        print viterbi
+        q_state = viterbi.index(max(viterbi))
+        print q_state
+        '''for i in range(len(sentence)-2, -1, -1):
+            q_path.insert(0, )
+        
+        print_tagged_sentence(sentence, q_path, pos_l)'''
         for line in Q_star:
             print line
         return
