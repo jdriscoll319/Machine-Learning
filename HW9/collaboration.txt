@@ -1,0 +1,10 @@
+Did you receive any help whatsoever from anyone in solving this assignment? Yes.
+Received help From Karsh Tharyani on implementation of forward.
+Worked with Josh Bennett on Viterbi algorithm.
+Worked with Karsh Tharyani and Andrew Wong on Baum Welch questions.
+
+Did you give any help whatsoever to anyone in solving this assignment? Yes.
+Worked with Josh Bennett on Viterbi algorithm.
+Worked with Karsh Tharyani and Andrew Wong on Baum Welch questions. 
+
+Did you find or come across code that implements any part of this assignment? No.
