@@ -2,7 +2,6 @@ import sys
 ####################################################################
 ##REMOVE ME BEFORE SUBMITTING!!!!!!#################################
 ####################################################################
-sys.path.append('./hw9-data')
 from logsum import log_sum
 import parse
 import math
